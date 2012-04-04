@@ -1,0 +1,82 @@
+[!
+ use strict;
+ use PVE::pvecfg;
+ use PVE::I18N;
+ use PVE::Utils;
+ use PVE::ConfigServer;
+ use PVE::HTMLTable;
+ use PVE::Config;
+ use PVE::HTMLDropDown;
+ use PVE::Cluster;
+ use PVE::HTMLControls;
+ use PVE::HTMLUtils;
+!]
+
+[-
+ use strict;
+
+ my $cinfo = $fdat{__cinfo};
+
+ my $conn = PVE::ConfigClient::connect ($udat{auth_cookie});
+
+ if ($udat{action} && defined ($fdat{cid}) && $fdat{veid} && $fdat{type}) {
+
+   eval {
+     check_write_mode ($udat{AM});
+
+     if ($udat{action} eq 'destroy') {
+       $conn->vmcommand_destroy ($fdat{cid}, $fdat{veid}, $fdat{type})->result;
+     } elsif ($udat{action} eq 'shutdown') {
+       $conn->vmcommand_stop ($fdat{cid}, $fdat{veid}, $fdat{type}, 0)->result;
+     } elsif ($udat{action} eq 'stop') {
+       $conn->vmcommand_stop ($fdat{cid}, $fdat{veid}, $fdat{type}, 1)->result;
+     } elsif ($udat{action} eq 'umount') {
+       $conn->vmcommand_umount ($fdat{cid}, $fdat{veid}, $fdat{type})->result;
+     } elsif ($udat{action} eq 'start') {
+       $conn->vmcommand_start ($fdat{cid}, $fdat{veid}, $fdat{type})->result;
+     } elsif ($udat{action} eq 'restart') {
+       $conn->vmcommand_restart ($fdat{cid}, $fdat{veid}, $fdat{type})->result;
+     }
+   };
+   $udat{popup_error} = $@ if $@;
+ }
+
+ my $vzlist = $conn->cluster_vzlist()->result;
+
+ my $out = '';
+
+ if ($fdat{confirmdestroy} && defined ($fdat{cid}) && $fdat{veid} && $fdat{type}) {
+
+   my $msg = PVE::HTMLUtils::msg ('confirm_remove');
+   $msg = sprintf ($msg, $fdat{veid});
+
+   my $ptoken = PVE::Utils::get_page_token();
+   my $href = "?action=destroy&amp;ptoken=$ptoken&amp;cid=$fdat{cid}&amp;veid=$fdat{veid}&amp;type=$fdat{type}";
+
+   print OUT PVE::HTMLUtils::create_confirmframe ($msg, __("Remove"), $href, $fdat{__uri});
+
+   return;
+ }
+
+ if ($cinfo->{local}->{role} ne 'N') {
+   $out .= PVE::HTMLUtils::create_statusframe ('vmops', __('Running Maintainance Tasks'));
+   $out .= PVE::HTMLControls::create_wsviewer ("vmops", undef, '/ws/vmops', {} , 5);
+   $out .= "<br><br>";
+ }
+
+ foreach my $ni (@{$cinfo->{nodes}}) {
+   my $cid = $ni->{cid};
+
+   my $vzl = $vzlist ? $vzlist->{"CID_$cid"} : undef;
+
+   my $html = $vzl ? PVE::HTMLUtils::create_vzlist_table ($cid, $vzl) : undef;
+
+   $out .= PVE::HTMLUtils::create_statusframe ("vmview$cid", "Cluster Node '$ni->{name}'", undef, $html);
+   $out .= PVE::HTMLControls::create_wsviewer ("vmview$cid", "vmview${cid}right", '/ws/vzlist', { cid => $cid }, 5);
+
+   $out .= "<br>\n";
+ }
+
+ print OUT $out;
+
+-]
