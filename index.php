@@ -1,12 +1,40 @@
 <html>
 <head>
 	<title>Test Result</title>
+  <style>
+    .pass {
+      background: #00ef00;
+      width: 180px;
+      height: 50px;
+      display: table;
+    }
+    .pass p {
+      color: white;
+      font-size: 50px;
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .fail {
+      background: #ff0000;
+      width: 180px;
+      height: 50px;
+      display: table;
+    }
+    .fail p {
+      color: white;
+      font-size: 50px;
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 	<?php
 	$objOpen = opendir("xml");
 	while (($file = readdir($objOpen)) !== false)
-	{	
+	{
 		if (strlen($file) < 5 ){
 		}
 		else {
@@ -16,8 +44,11 @@
 		#echo $fname . "<br />";
 		checkTest ($file,$fname);
 		}
-		
-	}		
+
+	}
+
+  function pass() { echo '<div class="pass"><p>PASS</p></div>'; }
+  function fail() { echo '<div class="fail"><p>FAIL</p></div>'; }
 	function checkTest ($filename,$fname){
 		$name = "xml/" . $filename;
 		$ProgramList = array("InfraRecorder",
@@ -33,7 +64,7 @@
 			"7-Zip 9.20 (x64 edition)",
 			"InfraRecorder 0.52 (x64 edition)",
 			"Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.17");
-			
+
 		$xml = simplexml_load_file($name);
 
 		$n=0;
@@ -41,17 +72,17 @@
 		$osArch = 32;
 
 		foreach($xml->children() as $child){
-			for ($i=0; $i <= 12; $i++) { 				
-				if ($fname == "A") 
+			for ($i=0; $i <= 12; $i++) {
+				if ($fname == "A")
 				#if ($child == "7-Zip 9.20 (x64 edition)" || $child == "InfraRecorder 0.52 (x64 edition)" || $child == "Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.17")
-				{	
-					$osArch = 64; 
+				{
+					$osArch = 64;
 				}
 				if ($child == $ProgramList[$i]){
 					$n++;
 					#echo $ProgramList[$i]. "<br />";
 				}
-			}	
+			}
 		}
 
 		echo '<a href="xml/' . $filename . '">' .$filename."</a>"."<br />";
@@ -59,12 +90,13 @@
 		if ($osArch == 32){
 			if ($n >= 9 )
 			{
-				echo '<img border="0" src="pass.jpg"/>'. "<br />";
+        pass();
+        				//echo '<img border="0" src="pass.jpg"/>'. "<br />";
 				#echo "Pass";
 			}
-			else 
+			else
 			{
-				echo '<img border="0" src="fail.jpg"/>'. "<br />";
+        fail();
 				#echo "Fail";
 			}
 		}
@@ -72,16 +104,16 @@
 		{
 		if ($n >= 11)
 			{
-				echo '<img border="0" src="pass.jpg"/>'. "<br />";
+        pass();
 				#echo "Pass";
 			}
-			else 
+			else
 			{
-				echo '<img border="0" src="fail.jpg"/>'. "<br />";
+        fail();
 				#echo "Fail";
 			}
 		}
-		
+
 	}
 	?>
 </body>
