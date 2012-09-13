@@ -1,5 +1,6 @@
 <?php
-$xml = simplexml_load_file("test.xml");
+$fileName = $_GET['fname'];
+$xml = simplexml_load_file($fileName);
 
 echo $xml->getName() . "<br />";
 

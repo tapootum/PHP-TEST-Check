@@ -85,7 +85,7 @@
 			}
 		}
 
-		echo '<a href="xml/' . $filename . '">' .$filename."</a>"."<br />";
+		echo '<a href="xml.php?fname=xml/' . $filename . '">' .$filename."</a>"."<br />";
 		#echo "           " . $n . "     " . $osArch;
 		if ($osArch == 32){
 			if ($n >= 9 )
@@ -113,7 +113,6 @@
 				#echo "Fail";
 			}
 		}
-
 	}
 	?>
 </body>
