@@ -33,8 +33,7 @@
 <body>
 	<?php
 	$objOpen = opendir("xml");
-	while (($file = readdir($objOpen)) !== false)
-	{
+	while (($file = readdir($objOpen)) !== false) {
 		if (strlen($file) < 5 ){
 		}
 		else {
@@ -44,7 +43,6 @@
 		#echo $fname . "<br />";
 		checkTest ($file,$fname);
 		}
-
 	}
 
   function pass() { echo '<div class="pass"><p>PASS</p></div>'; }
@@ -73,9 +71,7 @@
 
 		foreach($xml->children() as $child){
 			for ($i=0; $i <= 12; $i++) {
-				if ($fname == "A")
-				#if ($child == "7-Zip 9.20 (x64 edition)" || $child == "InfraRecorder 0.52 (x64 edition)" || $child == "Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.17")
-				{
+				if ($fname == "A") {
 					$osArch = 64;
 				}
 				if ($child == $ProgramList[$i]){
@@ -88,29 +84,22 @@
 		echo '<a href="xml.php?fname=xml/' . $filename . '">' .$filename."</a>"."<br />";
 		#echo "           " . $n . "     " . $osArch;
 		if ($osArch == 32){
-			if ($n >= 9 )
-			{
+			if ($n >= 9 ){
         pass();
-        				//echo '<img border="0" src="pass.jpg"/>'. "<br />";
+        		//echo '<img border="0" src="pass.jpg"/>'. "<br />";
 				#echo "Pass";
 			}
-			else
-			{
+			else {
         fail();
 				#echo "Fail";
 			}
 		}
-		else
-		{
-		if ($n >= 11)
-			{
-        pass();
-				#echo "Pass";
+		else {
+		if ($n >= 11) {
+        pass();		#echo "Pass";
 			}
-			else
-			{
-        fail();
-				#echo "Fail";
+			else {
+        fail();		#echo "Fail";
 			}
 		}
 	}
